@@ -30,6 +30,7 @@
 <meta name="twitter:image:alt" content="Плакат ЦЕХ в конструктивистской графике">
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%231B1714'/%3E%3Ccircle cx='32' cy='30' r='15' fill='%23A8CC00'/%3E%3Crect x='8' y='44' width='48' height='6' fill='%23E11D74'/%3E%3C/svg%3E">
+
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
@@ -50,6 +51,7 @@
         k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
     })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=111909565', 'ym');
     ym(111909565, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+    window.YM_ID = 111909565;   /* цели чата и калькулятора */
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/111909565" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- /Yandex.Metrika counter -->
@@ -303,6 +305,7 @@ svg{display:block}
       <a href="#kalkulyator">Калькулятор</a>
       <a href="#metod">Метод</a>
       <a href="#otvety">Ответы</a>
+      <a href="/blog/">Блог</a>
     </nav>
     <a class="btn btn-fu btn-sm" href="#zayavka" data-cta="header">Показать на моём бренде</a>
   </div>
@@ -872,8 +875,8 @@ svg{display:block}
             <span>Фото и видео<b id="sumG">не нужна</b></span>
             <span>Учёт и ERP<b id="sumE">не нужно</b></span>
           </div>
-          <a class="btn btn-li btn-blk" id="calcGo" href="#zayavka" data-cta="calc" target="_blank" rel="noopener">Рассчитать в чат-боте</a>
-          <p class="calc-note">Бот получит параметры и вернёт цену</p>
+          <a class="btn btn-li btn-blk" id="calcGo" href="#zayavka" data-cta="calc">Рассчитать в чат-боте</a>
+          <p class="calc-note">Бот получит параметры и покажет цену прямо здесь</p>
         </div>
       </div>
     </div>
@@ -1050,46 +1053,24 @@ svg{display:block}
           <li data-i="03" style="border-color:rgba(251,248,243,.3)"><span>Обложка к нему в вашей палитре</span></li>
         </ul>
         <p class="mark" style="margin-top:22px;letter-spacing:.1em;line-height:1.9;opacity:.8;max-width:44ch">
-          Нужен разбор голосом: выберите в форме встречу на 40 минут.
+          Нужен разбор голосом: выберите в чате встречу на 40 минут.
         </p>
       </div>
 
-      <div class="form" id="fw">
-        <div class="form-body">
-          <form id="lead" novalidate>
-            <div class="fld"><label for="f2">Ссылка на канал или сайт</label>
-              <input id="f2" name="link" type="text" inputmode="url" required placeholder="t.me/… или сайт"></div>
-            <div class="fld"><label for="f1">Телеграм или почта</label>
-              <input id="f1" name="contact" type="text" autocomplete="email" required placeholder="@username или mail@company.com"></div>
-            <div class="fld"><label for="f3">Что нужно</label>
-              <select id="f3" name="tier">
-                <option value="probny" selected>Пробный выпуск, бесплатно</option>
-                                <option value="razbor">Разбор на встрече 40 минут</option>
-                <option value="naladka">Базовый тариф · от 10 000 ₽ / мес</option>
-                <option value="svoy">Свой тариф · расчёт в чат-боте</option>
-              </select></div>
-            <div class="fld"><label for="f4">Как вас зовут</label>
-              <input id="f4" name="name" type="text" autocomplete="name" placeholder="Имя"></div>
-            <input class="hp" type="text" name="company_website" tabindex="-1" autocomplete="off" aria-hidden="true">
-            <label class="consent">
-              <input type="checkbox" id="f5" name="consent" required>
-              <span>Согласен на обработку персональных данных и принимаю
-              <a href="/privacy.html" target="_blank" rel="noopener">политику конфиденциальности</a>.
-              Данные нужны, чтобы ответить на заявку, третьим лицам мы их не передаём
-              и в рассылку без спроса не добавляем</span>
-            </label>
-            <button class="btn btn-fu btn-blk" type="submit" data-cta="form">Отправить</button>
-          </form>
-          <p class="form-note">
-            Бесплатно, без созвона. Ответим в течение рабочего дня.<br>
-            Формы не любите: пишите на <a href="mailto:lily@simpleasmagic.com">lily@simpleasmagic.com</a><br>
-            Отозвать согласие и удалить свои данные можно письмом на тот же адрес
-          </p>
+      <div class="chat" id="chat">
+        <div class="chat-top">
+          <span class="chat-dot" aria-hidden="true"></span>
+          <b>Чат-бот ЦЕХа</b>
+          <span class="chat-st">отвечает сразу</span>
         </div>
-        <div class="form-ok" role="status" aria-live="polite">
-          <b>Принято</b>
-          <p style="color:var(--ink-soft)">Наш менеджер свяжется с вами в течение рабочего дня.</p>
-        </div>
+        <div class="chat-log" id="chatLog" role="log" aria-live="polite" aria-label="Диалог с ботом"></div>
+        <div class="chat-act" id="chatAct"></div>
+      </div>
+      <p class="form-note" style="margin-top:14px">
+        Бесплатно, без созвона. Ответим в течение рабочего дня.<br>
+        Чаты не любите: пишите на <a href="mailto:lily@simpleasmagic.com">lily@simpleasmagic.com</a><br>
+        Отозвать согласие и удалить свои данные можно письмом на тот же адрес
+      </p>
       </div>
     </div>
   </div>
@@ -1108,7 +1089,7 @@ svg{display:block}
       <a href="https://xn--e1a6ab.xn--80anktkl.xn--p1ai/">цех.запуск.рф</a><br>
       ООО «ПЛАНТ» · ОГРН 1255400034702 · ИНН 5473023349 · КПП 547301001 · г. Искитим<br>
       Оставляя заявку, вы соглашаетесь на обработку персональных данных<br>
-      <a href="/oferta.html">Публичная оферта</a> · <a href="/privacy.html">Политика конфиденциальности</a> · <a href="mailto:lily@simpleasmagic.com">lily@simpleasmagic.com</a><br>
+      <a href="/blog/">Блог</a> · <a href="/oferta.html">Публичная оферта</a> · <a href="/privacy.html">Политика конфиденциальности</a> · <a href="mailto:lily@simpleasmagic.com">lily@simpleasmagic.com</a><br>
       Обновлено <time datetime="2026-08-20">20 августа 2026</time></p>
   </div>
 </footer>

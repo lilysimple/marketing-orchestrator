@@ -179,8 +179,11 @@
     function draw(){
       for(var k in out){ if(out[k]) out[k].textContent=labels[k]; }
       vol.innerHTML='≈ '+volume()+' материалов<small>в месяц при этих параметрах</small>';
+      /* Кнопка ведёт в чат на этой же странице. Телеграм остаётся запасным
+         путём: если скрипт чата не загрузился, ссылка откроет бота. */
       var payload='p'+state.p+'f'+state.f+'v'+state.v+'g'+state.g+'e'+state.e;
-      if(BOT_URL){ go.href=BOT_URL+'?start='+payload; go.target='_blank'; }
+      if(document.getElementById('chat')){ go.href='#zayavka'; go.removeAttribute('target'); }
+      else if(BOT_URL){ go.href=BOT_URL+'?start='+payload; go.target='_blank'; }
       else { go.href='#zayavka'; go.removeAttribute('target'); }
     }
     [].slice.call(calc.querySelectorAll('.cg')).forEach(function(group){
@@ -197,37 +200,11 @@
     });
     go.addEventListener('click',function(){
       track('calc_submit',{p:state.p,f:state.f,v:state.v,g:state.g,e:state.e});
+      if(window.TSEH_CHAT) window.TSEH_CHAT.fromCalc(state);
     });
     draw();
   }
 
-  /* ---------- форма ----------
-     НАСТРОЙКА: вставьте сюда адрес формы из Formspree.
-     Он выглядит так: https://formspree.io/f/abcdwxyz
-     Пока строка пустая, форма открывает почтовый клиент. */
-  var ENDPOINT="";
-  var MAILTO="lily@simpleasmagic.com";
-  var form=document.getElementById('lead'), fw=document.getElementById('fw');
-
-  form.addEventListener('submit',function(e){
-    e.preventDefault();
-    if(form.company_website.value) return;
-    var lk=form.link.value.trim(), ct=form.contact.value.trim();
-    if(!lk||!ct){ (!lk?form.link:form.contact).focus(); return; }
-    if(form.consent && !form.consent.checked){ form.consent.focus(); return; }
-
-    var d={link:lk,contact:ct,tier:form.tier.options[form.tier.selectedIndex].text,name:form.name.value.trim(),consent:true,page:location.href};
-    track('lead_submit',{tier:form.tier.value});
-
-    function done(){ fw.classList.add('sent'); }
-    function fallback(){
-      var s=encodeURIComponent('Заявка с сайта ЦЕХ · '+(d.name||d.contact));
-      var b=encodeURIComponent('Канал или сайт: '+d.link+'\nКонтакт: '+d.contact+'\nЧто нужно: '+d.tier+'\nИмя: '+(d.name||'не указано')+'\nСтраница: '+d.page);
-      window.location.href='mailto:'+MAILTO+'?subject='+s+'&body='+b;
-    }
-    if(ENDPOINT){ fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(d)}).then(done).catch(fallback); }
-    else { fallback(); done(); }
-  });
 })();
 
 (function(){
@@ -417,4 +394,353 @@
     requestAnimationFrame(frame);
   },{passive:true});
   frame();
+})();
+
+/* ================= ЧАТ-БОТ ЦЕХА =================
+   Один сценарий на кнопках, две ветки:
+     · расчёт тарифа  — те же пять параметров, что в калькуляторе;
+     · сборка          — бриф из четырёх вопросов.
+   Сервер не нужен: диалог живёт в браузере, заявка уходит одним POST.
+
+   НАСТРОЙКА (три строки ниже):
+   CHAT_ENDPOINT · адрес веб-приложения Google Apps Script.
+                   Пока пусто, заявка уходит в Telegram-бота и на почту.
+   CHAT_BOT      · адрес Telegram-бота, запасной путь и «продолжить в телеграме».
+   CHAT_MAIL     · почта, куда падает письмо, если не сработало ничего.
+*/
+(function(){
+  "use strict";
+
+  var CHAT_ENDPOINT = "";
+  var CHAT_BOT      = "https://t.me/tseh_lab_bot";
+  var CHAT_MAIL     = "lily@simpleasmagic.com";
+  var PRIVACY       = "/privacy.html";
+
+  var log = document.getElementById('chatLog');
+  var act = document.getElementById('chatAct');
+  if(!log || !act) return;
+
+  function track(n,p){try{
+    if(window.plausible) window.plausible(n,{props:p});
+    if(window.dataLayer) window.dataLayer.push(Object.assign({event:n},p||{}));
+    if(window.ym && window.YM_ID) window.ym(window.YM_ID,'reachGoal',n);
+  }catch(e){}}
+
+  var CALM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var PAUSE = CALM ? 0 : 420;
+
+  /* ---------- прайс · единственное место, где меняются деньги.
+       Значения должны совпадать с bot.py, иначе сайт и телеграм
+       назовут человеку разные цены. ---------- */
+  var BASE = 10000;
+  var PLATFORM_STEP = 3500;
+  var FREQ = {2:-1500, 3:0, 5:4000, 7:7000};
+  var VISUAL = {1:0, 2:3000, 3:5000};
+  var GENERATION = 2900;
+  var ERP = 15000;
+
+  var TITLES = {p:'Площадки', f:'Ритм', v:'Визуал', g:'Фото и видео', e:'Учёт и ERP'};
+  var LABELS = {
+    p:{1:'1 площадка',2:'2 площадки',3:'3 площадки',4:'4 и больше'},
+    f:{2:'2 в неделю',3:'3 в неделю',5:'каждый будний день',7:'каждый день'},
+    v:{1:'обложки',2:'обложки и карусели',3:'обложки, карусели, сценарии видео'},
+    g:{0:'не нужна',1:'нужна'},
+    e:{0:'не нужно',1:'нужно'}
+  };
+
+  var state = {p:1,f:3,v:1,g:0,e:0};
+  var lead  = {branch:'', link:'', contact:'', tier:'', name:''};
+  var opened = Date.now();
+  var sent = false;
+
+  function money(n){
+    var s = String(Math.round(Math.abs(n))).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+    return (n<0?'−':'')+s+' ₽';
+  }
+  function plural(n,one,few,many){
+    var h=n%100; if(h>=11&&h<=14) return many;
+    var t=n%10; if(t===1) return one; if(t>=2&&t<=4) return few; return many;
+  }
+  function price(s){
+    var total=BASE, lines=['Базовый тариф · '+money(BASE)];
+    var extra=s.p-1;
+    if(extra>0){ var a=extra*PLATFORM_STEP; total+=a;
+      lines.push('+'+extra+' '+plural(extra,'площадка','площадки','площадок')+' · '+money(a)); }
+    var fr=FREQ[s.f]||0;
+    if(fr){ total+=fr; lines.push('Ритм '+LABELS.f[s.f]+' · '+(fr>0?'+':'')+money(fr)); }
+    var vi=VISUAL[s.v]||0;
+    if(vi){ total+=vi; lines.push('Визуал '+LABELS.v[s.v]+' · +'+money(vi)); }
+    if(s.g){ total+=GENERATION; lines.push('Генерация фото и видео · +'+money(GENERATION)); }
+    if(s.e){ total+=ERP; lines.push('Подключение к учёту и ERP · +'+money(ERP)); }
+    return {total:total, lines:lines};
+  }
+  function volume(s){
+    var n=s.f*4*(1+0.35*(s.p-1));
+    if(s.v>1) n+=s.f;
+    if(s.g) n+=4;
+    return Math.round(n/2)*2;
+  }
+  function payload(s){ return 'p'+s.p+'f'+s.f+'v'+s.v+'g'+s.g+'e'+s.e; }
+
+  /* ---------- вывод ---------- */
+  function scroll(){ log.scrollTop = log.scrollHeight; }
+  function add(who, html){
+    var m=document.createElement('div');
+    m.className='msg msg-'+who;
+    m.innerHTML=html;
+    log.appendChild(m); scroll();
+    return m;
+  }
+  function typing(){
+    var t=document.createElement('div');
+    t.className='msg msg-b msg-typing';
+    t.innerHTML='<i></i><i></i><i></i>';
+    log.appendChild(t); scroll();
+    return t;
+  }
+
+  var queue = Promise.resolve();
+  function bot(html){
+    queue = queue.then(function(){
+      return new Promise(function(done){
+        if(!PAUSE){ add('b',html); return done(); }
+        var t=typing();
+        setTimeout(function(){ t.parentNode && t.parentNode.removeChild(t); add('b',html); done(); }, PAUSE);
+      });
+    });
+    return queue;
+  }
+  function me(text){ add('m', esc(text)); }
+  function then(fn){ queue=queue.then(fn); return queue; }
+  function esc(s){ return String(s).replace(/[&<>"]/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+  /* ---------- органы управления ---------- */
+  function clear(){ act.innerHTML=''; }
+  function choices(items){
+    then(function(){
+      clear();
+      items.forEach(function(it){
+        var b=document.createElement('button');
+        b.type='button';
+        b.className='chat-b'+(it.soft?' chat-b-soft':'');
+        b.textContent=it.t;
+        b.addEventListener('click',function(){
+          if(it.echo!==false) me(it.echo || it.t);
+          clear();
+          it.go();
+        });
+        act.appendChild(b);
+      });
+      scroll();
+    });
+  }
+  function ask(opts){
+    /* строка ввода: placeholder, проверка, что дальше */
+    then(function(){
+      clear();
+      var wrap=document.createElement('form');
+      wrap.className='chat-in';
+      var i=document.createElement('input');
+      i.type=opts.type||'text';
+      i.placeholder=opts.ph||'';
+      if(opts.mode) i.setAttribute('inputmode',opts.mode);
+      if(opts.auto) i.setAttribute('autocomplete',opts.auto);
+      var b=document.createElement('button');
+      b.type='submit'; b.className='chat-b chat-b-go'; b.textContent=opts.btn||'Дальше';
+      wrap.appendChild(i); wrap.appendChild(b);
+      if(opts.skip){
+        var s=document.createElement('button');
+        s.type='button'; s.className='chat-b chat-b-soft'; s.textContent=opts.skip;
+        s.addEventListener('click',function(){ clear(); opts.onSkip(); });
+        wrap.appendChild(s);
+      }
+      wrap.addEventListener('submit',function(e){
+        e.preventDefault();
+        var v=i.value.trim();
+        if(opts.check && !opts.check(v)){ i.classList.add('bad'); i.focus(); return; }
+        me(v); clear(); opts.next(v);
+      });
+      act.appendChild(wrap);
+      scroll();
+      if(!CALM) setTimeout(function(){ i.focus({preventScroll:true}); },80);
+    });
+  }
+
+  /* ---------- сценарий · вход ---------- */
+  function hello(){
+    bot('Здравствуйте. Я бот ЦЕХа: считаю тариф и принимаю заявки. Отвечаю сразу, кнопками.');
+    bot('С чего начнём?');
+    choices([
+      {t:'Собрать свой тариф', go:calcStart},
+      {t:'Пробный выпуск бесплатно', go:function(){ lead.tier='Пробный выпуск, бесплатно'; briefStart('probny'); }},
+      {t:'Разбор на встрече 40 минут', go:function(){ lead.tier='Разбор на встрече 40 минут'; briefStart('razbor'); }}
+    ]);
+  }
+
+  /* ---------- ветка · расчёт тарифа ---------- */
+  var STEPS = [
+    {k:'p', q:'Сколько площадок ведём?', o:[1,2,3,4]},
+    {k:'f', q:'Сколько публикаций в неделю?', o:[2,3,5,7]},
+    {k:'v', q:'Что нужно из визуала?', o:[1,2,3]},
+    {k:'g', q:'Нужна генерация фото и видео?', o:[0,1]},
+    {k:'e', q:'Подключаем учёт и ERP?', o:[0,1]}
+  ];
+
+  function calcStart(){
+    lead.branch='расчёт';
+    track('chat_calc_start');
+    bot('Пять вопросов, меньше минуты. Ответы потом можно поправить.');
+    step(0);
+  }
+  function step(i){
+    if(i>=STEPS.length) return result();
+    var s=STEPS[i];
+    bot(esc(s.q));
+    choices(s.o.map(function(v){
+      return {t: LABELS[s.k][v], go: function(){ state[s.k]=v; step(i+1); }};
+    }));
+  }
+  function result(){
+    var r=price(state), vol=volume(state);
+    var body=r.lines.map(function(l){ return '<li>'+esc(l)+'</li>'; }).join('');
+    var params=['p','f','v','g','e'].map(function(k){
+      return '<li><span>'+TITLES[k]+'</span><b>'+esc(LABELS[k][state[k]])+'</b></li>'; }).join('');
+    bot('<b class="msg-sum">'+money(r.total)+' в месяц</b>'+
+        '<span class="msg-sub">Примерно '+vol+' '+plural(vol,'материал','материала','материалов')+' в месяц</span>'+
+        '<em class="msg-h">Из чего сложилось</em><ul class="msg-l">'+body+'</ul>'+
+        '<em class="msg-h">Параметры</em><ul class="msg-p">'+params+'</ul>');
+    bot('Сборка цеха входит в тариф. Первые три дня пробные: не подошло — возвращаем деньги целиком. Цена расчётная, точную подтвердим после разбора вашего канала.');
+    then(function(){ track('chat_calc_done',{sum:price(state).total, params:payload(state)}); });
+    choices([
+      {t:'Оставить заявку', go:function(){ lead.tier='Свой тариф · '+money(price(state).total)+' в месяц'; briefStart('svoy'); }},
+      {t:'Поправить параметры', soft:true, go:function(){ bot('Хорошо, пройдём заново.'); step(0); }},
+      {t:'Продолжить в телеграме', soft:true, go:openBot}
+    ]);
+  }
+
+  /* ---------- ветка · сборка (бриф) ---------- */
+  function briefStart(tier){
+    lead.branch = lead.branch || 'сборка';
+    lead.tierCode = tier;
+    track('chat_brief_start',{tier:tier});
+    bot('Соберём заявку. Четыре коротких вопроса.');
+    bot('Ссылка на канал или сайт — посмотрю, о чём вы.');
+    ask({
+      ph:'t.me/… или сайт', mode:'url',
+      check:function(v){ return v.length>=3; },
+      next:function(v){ lead.link=v; askContact(); }
+    });
+  }
+  function askContact(){
+    bot('Куда прислать ответ: телеграм или почта?');
+    ask({
+      ph:'@username или mail@company.com', auto:'email',
+      check:function(v){ return v.length>=3; },
+      next:function(v){ lead.contact=v; askTier(); }
+    });
+  }
+  function askTier(){
+    if(lead.tier){ askName(); return; }
+    bot('Что нужно?');
+    choices([
+      {t:'Пробный выпуск, бесплатно', go:function(){ lead.tier='Пробный выпуск, бесплатно'; askName(); }},
+      {t:'Разбор на встрече 40 минут', go:function(){ lead.tier='Разбор на встрече 40 минут'; askName(); }},
+      {t:'Базовый тариф · от 10 000 ₽', go:function(){ lead.tier='Базовый тариф · от 10 000 ₽ / мес'; askName(); }},
+      {t:'Свой тариф · нужен расчёт', soft:true, go:function(){ lead.tier=''; calcStart(); }}
+    ]);
+  }
+  function askName(){
+    bot('Как вас зовут?');
+    ask({
+      ph:'Имя', auto:'name', skip:'Пропустить',
+      check:function(v){ return v.length>0; },
+      next:function(v){ lead.name=v; consent(); },
+      onSkip:function(){ lead.name=''; consent(); }
+    });
+  }
+  function consent(){
+    bot('Последнее. Данные нужны, чтобы ответить на заявку: третьим лицам не передаём, '+
+        'в рассылку без спроса не добавляем. <a href="'+PRIVACY+'" target="_blank" rel="noopener">Политика конфиденциальности</a>.');
+    choices([
+      {t:'Согласен, отправить', echo:'Согласен', go:send},
+      {t:'Не сейчас', soft:true, go:function(){
+        bot('Понимаю. Если удобнее письмом: <a href="mailto:'+CHAT_MAIL+'">'+CHAT_MAIL+'</a>.');
+        choices([{t:'Начать заново', soft:true, go:restart}]);
+      }}
+    ]);
+  }
+
+  /* ---------- отправка ---------- */
+  function data(){
+    return {
+      source:'сайт · чат',
+      branch:lead.branch,
+      link:lead.link,
+      contact:lead.contact,
+      tier:lead.tier,
+      name:lead.name,
+      params:payload(state),
+      params_text:['p','f','v','g','e'].map(function(k){ return TITLES[k]+': '+LABELS[k][state[k]]; }).join('; '),
+      sum:(lead.branch==='расчёт'?price(state).total:''),
+      consent:true,
+      page:location.href,
+      seconds:Math.round((Date.now()-opened)/1000)
+    };
+  }
+  function mailFallback(d){
+    var s=encodeURIComponent('Заявка с сайта ЦЕХ · '+(d.name||d.contact));
+    var b=encodeURIComponent(
+      'Канал или сайт: '+d.link+'\nКонтакт: '+d.contact+'\nЧто нужно: '+d.tier+
+      '\nИмя: '+(d.name||'не указано')+'\nПараметры: '+d.params_text+'\nСтраница: '+d.page);
+    window.location.href='mailto:'+CHAT_MAIL+'?subject='+s+'&body='+b;
+  }
+  function done(){
+    if(sent) return; sent=true;
+    bot('<b class="msg-sum">Принято</b><span class="msg-sub">Наш менеджер свяжется с вами в течение рабочего дня</span>');
+    choices([
+      {t:'Продолжить в телеграме', go:openBot},
+      {t:'Начать заново', soft:true, go:restart}
+    ]);
+  }
+  function send(){
+    then(function(){
+      var d=data();
+      track('chat_lead',{branch:d.branch, tier:d.tier});
+      if(!CHAT_ENDPOINT){ mailFallback(d); done(); return; }
+      /* text/plain — чтобы браузер не слал preflight: Apps Script его не обрабатывает */
+      fetch(CHAT_ENDPOINT,{
+        method:'POST',
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body:JSON.stringify(d)
+      }).then(done).catch(function(){ mailFallback(d); done(); });
+    });
+  }
+  function openBot(){
+    var url = CHAT_BOT + (lead.branch==='расчёт' ? '?start='+payload(state) : '?start=brief');
+    window.open(url,'_blank','noopener');
+  }
+  function restart(){
+    sent=false; opened=Date.now();
+    state={p:1,f:3,v:1,g:0,e:0};
+    lead={branch:'',link:'',contact:'',tier:'',name:''};
+    log.innerHTML=''; clear();
+    hello();
+  }
+
+  /* ---------- вход из калькулятора ---------- */
+  window.TSEH_CHAT = {
+    fromCalc:function(s){
+      sent=false; opened=Date.now();
+      state={p:s.p,f:s.f,v:s.v,g:s.g,e:s.e};
+      lead={branch:'расчёт',link:'',contact:'',tier:'',name:''};
+      log.innerHTML=''; clear();
+      track('chat_from_calc',{params:payload(state)});
+      bot('Принял параметры из калькулятора.');
+      result();
+    },
+    open:function(){ if(!log.children.length) hello(); }
+  };
+
+  hello();
 })();
