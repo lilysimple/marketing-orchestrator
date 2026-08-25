@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Блог ЦЕХА · практика контента и сайтов на AI-агентах</title>
+<meta name="description" content="Разборы из практики контент-завода: как собирают сайты и контент с нейросетями, что работает в SMM без штата и на чём чаще всего спотыкаются.">
+<link rel="canonical" href="https://xn--e1a6ab.xn--80anktkl.xn--p1ai/blog/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#1B1714">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:site_name" content="ЦЕХ">
+<meta property="og:url" content="https://xn--e1a6ab.xn--80anktkl.xn--p1ai/blog/">
+<meta property="og:title" content="Блог ЦЕХА · практика контента и сайтов на AI-агентах">
+<meta property="og:description" content="Разборы из практики контент-завода: сайты и контент с нейросетями без штата.">
+<meta property="og:image" content="https://xn--e1a6ab.xn--80anktkl.xn--p1ai/og.png">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;800;900&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --ink:#1B1714; --beige:#F4EEE7; --acc:#E11D74; --dim:#9C9188;
+  --line:rgba(244,238,231,.16);
+  --disp:"Unbounded","Arial Black",system-ui,sans-serif;
+  --ui:"JetBrains Mono",ui-monospace,monospace;
+  --body:"Manrope",system-ui,-apple-system,sans-serif;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--ink); color:var(--beige); font-family:var(--body); font-size:17px; line-height:1.55}
+.sec{position:relative; overflow:hidden; padding:clamp(56px,9vw,120px) 0}
+.sec::after{content:""; position:absolute; inset:0; pointer-events:none; background-image:var(--grain); background-size:220px 220px; mix-blend-mode:overlay; opacity:.5}
+.sec::before{content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background:radial-gradient(58% 46% at 82% 4%, rgba(225,29,116,.38), transparent 68%), radial-gradient(52% 44% at 6% 96%, rgba(159,203,0,.26), transparent 66%)}
+.wrap{position:relative; z-index:2; width:min(1000px,100% - 2*clamp(20px,5vw,64px)); margin-inline:auto}
+.kicker{font-family:var(--ui); font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.14em; color:var(--dim); margin:0 0 18px}
+.kicker a{color:var(--dim)}
+h1{font-family:var(--disp); font-weight:900; font-size:clamp(36px,7vw,76px); line-height:1.05; letter-spacing:-.04em; text-transform:uppercase; margin:0}
+.lead{font-size:clamp(18px,2.2vw,22px); max-width:56ch; margin-top:24px}
+a{color:inherit}
+.list{display:flex; flex-direction:column; gap:14px; margin-top:clamp(30px,4vw,52px)}
+.item{border:1px solid var(--line); border-radius:22px; padding:clamp(20px,3vw,30px); text-decoration:none; display:block; transition:background .18s ease, transform .18s ease}
+.item:hover,.item:focus-visible{background:rgba(255,255,255,.07); transform:translateY(-2px)}
+.item .date{font-family:var(--ui); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--acc)}
+.item h2{font-family:var(--disp); font-weight:800; font-size:clamp(20px,3vw,30px); line-height:1.2; letter-spacing:-.02em; margin:10px 0 8px; text-transform:uppercase}
+.item p{margin:0; color:var(--beige); opacity:.82; max-width:66ch}
+.back{display:inline-block; margin-top:34px; font-family:var(--ui); font-size:12px; text-transform:uppercase; letter-spacing:.1em; border:1px solid var(--line); border-radius:999px; padding:14px 24px; text-decoration:none}
+:focus-visible{outline:3px solid var(--acc); outline-offset:3px; border-radius:6px}
+</style>
+</head>
+<body>
+<section class="sec">
+  <div class="wrap">
+    <nav class="kicker" aria-label="Хлебные крошки"><a href="/">ЦЕХ</a> · Блог</nav>
+    <h1>Блог цеха</h1>
+    <p class="lead">Разборы из практики: как собираются сайты и контент на AI-агентах, что даёт результат и на чём спотыкаются чаще всего.</p>
+    <div class="list">
+      <a class="item" href="/blog/kak-sdelat-sayt-neyrosetyu/">
+        <span class="date">25 августа 2026 · практика</span>
+        <h2>Как сделать сайт с помощью нейросети: 9 шагов</h2>
+        <p>От ядра бренда и боли покупателя до микроразметки, публикации на GitHub Pages и недельной ведомости метрик. Разбор собственной сборки цех.запуск.рф.</p>
+      </a>
+    </div>
+    <a class="back" href="/">← На главную</a>
+  </div>
+</section>
+</body>
+</html>

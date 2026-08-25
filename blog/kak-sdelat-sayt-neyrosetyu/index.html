@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Как сделать сайт с помощью нейросети: 9 шагов · ЦЕХ</title>
+<meta name="description" content="Пошаговый разбор: как сделать сайт с помощью нейросети — от ядра бренда и структуры страницы до SEO, публикации и аналитики. Девять шагов на опыте сборки цех.запуск.рф.">
+<meta name="author" content="ЦЕХ">
+<link rel="canonical" href="https://xn--e1a6ab.xn--80anktkl.xn--p1ai/blog/kak-sdelat-sayt-neyrosetyu/">
+<meta name="theme-color" content="#1B1714">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+<meta property="article:published_time" content="2026-08-25">
+<meta property="article:modified_time" content="2026-08-25">
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:site_name" content="ЦЕХ">
+<meta property="og:url" content="https://xn--e1a6ab.xn--80anktkl.xn--p1ai/blog/kak-sdelat-sayt-neyrosetyu/">
+<meta property="og:title" content="Как сделать сайт с помощью нейросети: 9 шагов от смыслов до аналитики">
+<meta property="og:description" content="Ядро бренда, боль покупателя, порядок блоков, дизайн-система, интерактив, приём заявок, SEO, публикация и метрики. Разбор на живом проекте.">
+<meta property="og:image" content="https://xn--e1a6ab.xn--80anktkl.xn--p1ai/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Плакат ЦЕХ: контент-завод на AI-агентах">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Как сделать сайт с помощью нейросети: 9 шагов">
+<meta name="twitter:description" content="От ядра бренда до недельной ведомости метрик. Разбор на живом проекте.">
+<meta name="twitter:image" content="https://xn--e1a6ab.xn--80anktkl.xn--p1ai/og.png">
+
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;800;900&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap">
+
+<style>
+:root{
+  --ink:#1B1714; --beige:#F4EEE7; --cream:#FBF8F3;
+  --fuchsia:#E11D74; --lime:#9FCB00; --violet:#6A4BFF;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --disp:"Unbounded","Arial Black",system-ui,sans-serif;
+  --ui:"JetBrains Mono",ui-monospace,monospace;
+  --body:"Manrope",system-ui,-apple-system,sans-serif;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ink); color:var(--beige);
+  font-family:var(--body); font-size:17px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%}
+
+/* ---------- section floods ---------- */
+.sec{
+  position:relative; overflow:hidden;
+  background:var(--bg); color:var(--fg);
+  padding:clamp(56px,9vw,132px) 0;
+  border-top:1px solid var(--line);
+}
+.sec::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background-image:var(--grain); background-size:220px 220px;
+  mix-blend-mode:overlay; opacity:.55;
+}
+.s-ink{--bg:#1B1714;--fg:#F4EEE7;--dim:#9C9188;--acc:#E11D74;--acc-on:#FBF8F3;--line:rgba(244,238,231,.16);--ghost:rgba(244,238,231,.9)}
+.s-cream{--bg:#F4EEE7;--fg:#1B1714;--dim:#726A61;--acc:#E11D74;--acc-on:#FBF8F3;--line:rgba(27,23,20,.14);--ghost:rgba(27,23,20,.9)}
+.s-fuchsia{--bg:#E11D74;--fg:#FBF8F3;--dim:rgba(251,248,243,.78);--acc:#1B1714;--acc-on:#FBF8F3;--line:rgba(251,248,243,.32);--ghost:rgba(251,248,243,.9)}
+.s-lime{--bg:#9FCB00;--fg:#1B2606;--dim:rgba(27,38,6,.72);--acc:#1B1714;--acc-on:#F4EEE7;--line:rgba(27,38,6,.26);--ghost:rgba(27,38,6,.9)}
+.s-violet{--bg:#6A4BFF;--fg:#FBF8F3;--dim:rgba(251,248,243,.78);--acc:#9FCB00;--acc-on:#1B2606;--line:rgba(251,248,243,.32);--ghost:rgba(251,248,243,.9)}
+
+.wrap{position:relative; z-index:2; width:min(1120px,100% - 2*clamp(20px,5vw,64px)); margin-inline:auto}
+
+/* ---------- type ---------- */
+.kicker{
+  font-family:var(--ui); font-size:12px; font-weight:700;
+  text-transform:uppercase; letter-spacing:.14em; color:var(--dim);
+  display:flex; align-items:center; gap:10px; margin:0 0 18px;
+  flex-wrap:wrap;
+}
+.kicker b{color:var(--acc); font-weight:700}
+.kicker a{color:var(--dim)}
+
+h1,h2{
+  font-family:var(--disp); font-weight:900;
+  letter-spacing:-.04em; line-height:1.05;
+  text-wrap:balance; margin:0;
+  text-transform:uppercase;
+}
+h1{font-size:clamp(38px,8.4vw,102px); margin-top:6px}
+h2{font-size:clamp(28px,5.2vw,66px)}
+.ghost{
+  color:transparent; -webkit-text-stroke:1.6px var(--ghost);
+  display:block;
+}
+h3{
+  font-family:var(--disp); font-weight:800; font-size:15px;
+  letter-spacing:.02em; line-height:1.3; margin:0 0 10px; text-transform:uppercase;
+}
+p{margin:0 0 14px; max-width:64ch}
+.lead{font-size:clamp(18px,2.2vw,23px); line-height:1.45; font-weight:500; max-width:56ch; margin-top:26px}
+a{color:inherit}
+strong{font-weight:800}
+code{
+  font-family:var(--ui); font-size:.86em; background:var(--acc);
+  color:var(--acc-on); padding:2px 7px; border-radius:999px; white-space:nowrap;
+}
+
+/* ---------- step numeral ---------- */
+.step{position:relative}
+.num{
+  position:absolute; right:-.06em; top:-.34em;
+  font-family:var(--disp); font-weight:900; font-size:clamp(130px,22vw,290px);
+  line-height:.72; letter-spacing:-.06em;
+  color:transparent; -webkit-text-stroke:2px var(--ghost);
+  opacity:.17; pointer-events:none; z-index:1; user-select:none;
+}
+
+/* ---------- blocks ---------- */
+.cols{
+  display:grid; gap:clamp(20px,3vw,38px); margin-top:clamp(30px,4vw,52px);
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+}
+.card{
+  border:1px solid var(--line); border-radius:22px;
+  padding:clamp(18px,2.4vw,28px); background:rgba(255,255,255,.05);
+}
+.s-cream .card{background:rgba(255,255,255,.55)}
+.s-lime .card{background:rgba(255,255,255,.22)}
+.s-fuchsia .card,.s-violet .card{background:rgba(255,255,255,.10)}
+.card p:last-child,.card ul:last-child{margin-bottom:0}
+
+ul{margin:0 0 14px; padding-left:0; list-style:none; display:flex; flex-direction:column; gap:9px; max-width:64ch}
+li{position:relative; padding-left:24px}
+li::before{
+  content:"→"; position:absolute; left:0; top:0;
+  font-family:var(--ui); font-size:13px; color:var(--acc); font-weight:700;
+}
+ul.check li::before{content:"✦"}
+
+.prompt{
+  margin-top:20px; border:1px dashed var(--line); border-radius:22px;
+  padding:clamp(16px,2.2vw,24px); background:rgba(0,0,0,.10);
+}
+.s-cream .prompt{background:rgba(255,255,255,.6)}
+.prompt .tag{
+  font-family:var(--ui); font-size:11px; text-transform:uppercase;
+  letter-spacing:.14em; color:var(--dim); display:block; margin-bottom:10px;
+}
+.prompt q{
+  font-family:var(--ui); font-size:14px; line-height:1.6;
+  display:block; quotes:"«" "»"; max-width:70ch;
+}
+
+.sticker{
+  display:inline-block; margin-top:26px;
+  font-family:var(--ui); font-size:12px; font-weight:700;
+  text-transform:uppercase; letter-spacing:.1em;
+  background:var(--acc); color:var(--acc-on);
+  padding:11px 20px; border-radius:999px; transform:rotate(-2.5deg);
+}
+
+/* ---------- table ---------- */
+.tablewrap{overflow-x:auto; margin-top:clamp(26px,3.5vw,44px); border:1px solid var(--line); border-radius:22px}
+table{border-collapse:collapse; width:100%; min-width:640px; font-size:15px}
+th,td{text-align:left; padding:14px 18px; border-bottom:1px solid var(--line); vertical-align:top}
+th{
+  font-family:var(--ui); font-size:11px; text-transform:uppercase;
+  letter-spacing:.12em; color:var(--dim); font-weight:700;
+}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:700}
+.tn{font-variant-numeric:tabular-nums}
+
+/* ---------- hero ---------- */
+.hero{padding-top:clamp(56px,10vw,120px); padding-bottom:clamp(56px,9vw,120px)}
+.hero::before{
+  content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(58% 46% at 82% 4%, rgba(225,29,116,.42), transparent 68%),
+    radial-gradient(52% 44% at 6% 96%, rgba(159,203,0,.30), transparent 66%);
+}
+.hero h1 span{display:block}
+.meta{display:flex; flex-wrap:wrap; gap:10px; margin-top:36px}
+.meta span{
+  font-family:var(--ui); font-size:11px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.12em; border:1px solid var(--line); border-radius:999px; padding:9px 15px;
+}
+
+/* ---------- map ---------- */
+.map{display:grid; gap:10px; margin-top:clamp(28px,4vw,46px); grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.map a{
+  text-decoration:none; border:1px solid var(--line); border-radius:18px;
+  padding:16px 18px; display:flex; gap:12px; align-items:baseline;
+  transition:background .18s ease, transform .18s ease;
+}
+.map a:hover,.map a:focus-visible{background:rgba(255,255,255,.09); transform:translateY(-2px)}
+.map b{font-family:var(--ui); font-size:12px; color:var(--acc); letter-spacing:.08em}
+.map i{font-style:normal; font-family:var(--disp); font-weight:800; font-size:14px; text-transform:uppercase; letter-spacing:-.01em; line-height:1.25}
+
+/* ---------- faq ---------- */
+.faq{display:flex; flex-direction:column; gap:0; margin-top:clamp(26px,3.5vw,44px)}
+.faq details{border-bottom:1px solid var(--line); padding:18px 0}
+.faq summary{
+  font-family:var(--disp); font-weight:800; font-size:clamp(15px,2vw,19px);
+  cursor:pointer; list-style:none; display:flex; justify-content:space-between; gap:16px;
+  line-height:1.35;
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+"; font-family:var(--ui); color:var(--acc); font-size:20px; line-height:1}
+.faq details[open] summary::after{content:"–"}
+.faq p{margin:14px 0 0}
+
+/* ---------- cta ---------- */
+.cta-row{display:flex; flex-wrap:wrap; gap:12px; margin-top:32px}
+.btn{
+  font-family:var(--ui); font-size:12px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.1em; text-decoration:none; padding:16px 26px; border-radius:999px;
+  background:var(--acc); color:var(--acc-on); border:1px solid var(--acc);
+  transition:transform .18s ease;
+}
+.btn.ghost-btn{background:transparent; color:var(--fg); border-color:var(--line)}
+.btn:hover{transform:translateY(-2px)}
+
+a.term{
+  text-decoration:none; border-bottom:1px dashed var(--acc);
+  padding-bottom:1px;
+}
+a.term:hover{border-bottom-style:solid}
+
+.gloss{display:grid; gap:0; margin-top:clamp(26px,3.5vw,44px)}
+.gloss div{border-bottom:1px solid var(--line); padding:16px 0; display:grid; gap:6px; grid-template-columns:minmax(150px,220px) 1fr}
+.gloss dt{font-family:var(--disp); font-weight:800; font-size:14px; text-transform:uppercase; letter-spacing:.01em; line-height:1.3}
+.gloss dd{margin:0; max-width:64ch}
+.gloss div:target dt{color:var(--acc)}
+@media (max-width:640px){.gloss div{grid-template-columns:1fr}}
+
+.author{margin-top:28px; font-family:var(--ui); font-size:12px; color:var(--dim); letter-spacing:.06em}
+
+:focus-visible{outline:3px solid var(--acc); outline-offset:3px; border-radius:6px}
+@media (prefers-reduced-motion:reduce){*{transition:none !important; animation:none !important}}
+@media (max-width:640px){
+  .num{font-size:34vw; top:-.22em; opacity:.13}
+  p,ul{max-width:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<article class="sec s-ink hero">
+  <div class="wrap">
+    <nav class="kicker" aria-label="Хлебные крошки"><b>●</b> <a href="/">ЦЕХ</a> · <a href="/blog/">Блог</a> · Как сделать сайт нейросетью</nav>
+    <h1>
+      <span>Как сделать</span>
+      <span class="ghost">сайт</span>
+      <span>нейросетью</span>
+    </h1>
+    <p class="lead">Девять шагов от смыслов бренда до недельной ведомости метрик. Порядок не случайный: каждый шаг закрывает вопрос, без ответа на который следующий превращается в переделку.</p>
+    <p>Это разбор реальной сборки: так собран сайт <a href="/">цех.запуск.рф</a> — лендинг с калькулятором цены, демонстрацией работы AI-агентов и чат-ботом вместо формы. Ниже — что просить у нейросети на каждом шаге, каким файлом заканчивается шаг и на чём чаще всего спотыкаются.</p>
+    <div class="meta">
+      <span>Инструмент · Клод</span>
+      <span>Стек · HTML, CSS, JS</span>
+      <span>Хостинг · GitHub Pages</span>
+      <span>Срок · 3–5 заходов</span>
+      <span>Чтение · 9 минут</span>
+    </div>
+    <div class="map">
+      <a href="#yadro"><b>01</b><i>Ядро бренда</i></a>
+      <a href="#bol"><b>02</b><i>Боль и рынок</i></a>
+      <a href="#struktura"><b>03</b><i>Порядок блоков</i></a>
+      <a href="#dizayn"><b>04</b><i>Дизайн-система</i></a>
+      <a href="#interaktiv"><b>05</b><i>Интерактив</i></a>
+      <a href="#zayavki"><b>06</b><i>Приём заявок</i></a>
+      <a href="#seo"><b>07</b><i>SEO и нейросети</i></a>
+      <a href="#publikatsiya"><b>08</b><i>Публикация</i></a>
+      <a href="#analitika"><b>09</b><i>Аналитика</i></a>
+      <a href="#pravila"><b>✦</b><i>Как вести Клода</i></a>
+      <a href="#voprosy"><b>?</b><i>Частые вопросы</i></a>
+      <a href="#slovar"><b>АБВ</b><i>Словарь терминов</i></a>
+    </div>
+  </div>
+</article>
+
+<!-- ============ 01 ============ -->
+<section class="sec s-cream step" id="yadro">
+  <div class="wrap">
+    <span class="num" aria-hidden="true">01</span>
+    <div class="kicker"><b>Шаг 01</b> · Смыслы</div>
+    <h2>Ядро <span class="ghost">до дизайна</span></h2>
+    <p class="lead">Страница пересказывает то, что бренд уже знает о себе. Если это знание нигде не записано, текст собирается на вкус, а правки ходят по кругу: сегодня «слишком сухо», завтра «слишком громко».</p>
+    <div class="cols">
+      <div class="card">
+        <h3>Что собираем</h3>
+        <ul>
+          <li>Кто это и на чём стоит бренд</li>
+          <li>Аудитория: сегменты и их состояние до покупки</li>
+          <li>Позиционирование и линейка</li>
+          <li>Каналы и роль каждого</li>
+          <li>Воронка и банк <a class="term" href="#g-cta">CTA</a> по этапам</li>
+          <li>Голос бренда с примерами фраз</li>
+          <li>Стоп-лист: что бренд не говорит никогда</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Почему файлом, а не в диалоге</h3>
+        <p>Контекст в переписке живёт до конца сессии. Контекст в файле живёт всегда. <code>core.md</code> потом читают и сайт, и тексты, и бот, и llms.txt — голос не плывёт от захода к заходу.</p>
+        <p>В Цехе ядро — это 28 килобайт текста и тринадцать разделов. Это дневная работа, и она окупается на первой же правке лендинга.</p>
+      </div>
+      <div class="card">
+        <h3>Грабли</h3>
+        <ul>
+          <li>Ядро «в голове» — самый дорогой вариант</li>
+          <li>Стоп-лист без примеров не работает</li>
+          <li>Внутренний язык бренда хорош в заголовках и вреден на кнопках</li>
+        </ul>
+      </div>
+    </div>
+    <div class="prompt">
+      <span class="tag">Запрос нейросети</span>
+      <q>Распакуй бренд по интервью и собери файл ЯДРА: аудитория, позиционирование, линейка, каналы, воронка, банк CTA, голос, стоп-лист. Задавай вопросы по одному, после каждого ответа дописывай файл.</q>
+    </div>
+    <div class="sticker">Выход шага · core.md</div>
+  </div>
+</section>
+
+<!-- ============ 02 ============ -->
+<section class="sec s-fuchsia step" id="bol">
+  <div class="wrap">
+    <span class="num" aria-hidden="true">02</span>
+    <div class="kicker"><b>Шаг 02</b> · Продажа</div>
+    <h2>Назови боль <span class="ghost">и цену рынка</span></h2>
+    <p class="lead">Первая версия сайта Цеха была манифестом: она объясняла устройство продукта и ни разу не называла проблему покупателя. Слов «SMM», «штат», «подрядчик» на странице не было вообще.</p>
+    <div class="cols">
+      <div class="card">
+        <h3>Лид на языке покупателя</h3>
+        <p>Слоган остаётся, лид под ним говорит о человеке: что он перестанет делать. Ниже — полоса отрицаний в четыре слова: без чего он теперь обойдётся.</p>
+      </div>
+      <div class="card">
+        <h3>Деньги отдельной секцией</h3>
+        <p>Сравнение с реальными альтернативами, а не с абстракцией, и ваша колонка четвёртой. Каждая цифра рынка — <a href="/#vybor">со ссылкой на источник</a>.</p>
+      </div>
+      <div class="card">
+        <h3>Граница честности</h3>
+        <p>Цена рынка со ссылкой — факт. «Сэкономите 800 тысяч» — обещание результата, которого вы не мерили. Скидки и таймеры туда же.</p>
+      </div>
+    </div>
+    <div class="prompt">
+      <span class="tag">Запрос нейросети</span>
+      <q>Разбери страницу как маркетолог: названа ли боль в первом экране, с чем покупатель реально сравнивает, где на сайте деньги. Проверь всё против стоп-листа из ЯДРА и отсортируй правки по влиянию на выручку.</q>
+    </div>
+    <div class="sticker">Выход шага · разбор-сайта.md</div>
+  </div>
+</section>
+
+<!-- ============ 03 ============ -->
+<section class="sec s-cream step" id="struktura">
+  <div class="wrap">
+    <span class="num" aria-hidden="true">03</span>
+    <div class="kicker"><b>Шаг 03</b> · Структура</div>
+    <h2>Порядок блоков <span class="ghost">решает</span></h2>
+    <p class="lead">Лучший актив сайта Цеха — <a href="/#smena">анимированный чат</a>, где агенты ведут одну смену. В первой версии он стоял шестым, после манифеста и урока истории.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>#</th><th>Блок</th><th>Работа блока</th></tr></thead>
+        <tbody>
+          <tr><td class="tn">1</td><td>Первый экран</td><td>Кому это и какую задачу закрывает — за пять секунд</td></tr>
+          <tr><td class="tn">2</td><td>Коротко о продукте</td><td>Определение в одну фразу и две-три цифры</td></tr>
+          <tr><td class="tn">3</td><td>Деньги</td><td>Сколько стоит и с чем это сравнивают на рынке</td></tr>
+          <tr><td class="tn">4</td><td>Демонстрация</td><td>Показать продукт в работе, а не описать словами</td></tr>
+          <tr><td class="tn">5</td><td>Как устроено</td><td>Этапы и роли: из чего складывается результат</td></tr>
+          <tr><td class="tn">6</td><td>Примеры выхода</td><td>Что клиент получает на руки</td></tr>
+          <tr><td class="tn">7</td><td>Чем вы отличаетесь</td><td>Таблица против альтернатив покупателя</td></tr>
+          <tr><td class="tn">8</td><td>Тарифы</td><td>Дать войти дёшево и понять, за что доплачивают</td></tr>
+          <tr><td class="tn">9</td><td>Гарантии</td><td>Что будет, если не подойдёт</td></tr>
+          <tr><td class="tn">10</td><td>Метод и история</td><td>Отстройка для тех, кто уже заинтересован</td></tr>
+          <tr><td class="tn">11</td><td>Ответы на возражения</td><td>Снимают сомнения и кормят FAQ-разметку</td></tr>
+          <tr><td class="tn">12</td><td>Целевое действие</td><td>Одно действие, минимум полей</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="cols">
+      <div class="card">
+        <h3>Лестница действий</h3>
+        <p>Одна тяжёлая кнопка «созвон на 40 минут» отсекает всех, кто зашёл две минуты назад. Первая ступень — <a class="term" href="#g-konversiya">микро-конверсия</a>: «пришлите ссылку на канал, за два дня соберём три темы и один пост, бесплатно, без созвона». Встреча остаётся второй ступенью.</p>
+      </div>
+      <div class="card">
+        <h3>Надписи на кнопках</h3>
+        <p>«Оставить заявку» безлико. «Собрать ЯДРО» непонятно снаружи. Кнопка называет результат: «Показать на моём бренде», «Начать за 15 000 ₽». Под кнопкой строка, снимающая риск: «Ответим в течение рабочего дня. Созвон не нужен».</p>
+      </div>
+    </div>
+    <div class="sticker">Выход шага · карта блоков</div>
+  </div>
+</section>
+
+<!-- ============ 04 ============ -->
+<section class="sec s-violet step" id="dizayn">
+  <div class="wrap">
+    <span class="num" aria-hidden="true">04</span>
+    <div class="kicker"><b>Шаг 04</b> · Дизайн</div>
+    <h2>Токены <span class="ghost">раньше вёрстки</span></h2>
+    <p class="lead"><a class="term" href="#g-tokeny">Дизайн-система</a> — это не картинка, а четыре файла с переменными. Нейросеть верстает по ним, и страница остаётся собой на двадцатой правке.</p>
+    <div class="cols">
+      <div class="card">
+        <h3>Что лежит в системе</h3>
+        <ul>
+          <li><code>colors.css</code> — база, акценты, семантические алиасы</li>
+          <li><code>typography.css</code> — шкала, трекинг, веса</li>
+          <li><code>fonts.css</code> — подключение начертаний</li>
+          <li><code>spacing.css</code> — радиусы, отступы, сетка</li>
+          <li>Гайдлайны и компоненты примерами</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Один акцент на секцию</h3>
+        <p>Приём этой страницы: цвет заливает всю плоскость, заголовок стоит в двух-трёх строках, одна строка контурная. Зерно поверх каждой плоскости, наклонённый стикер, цифра шага, уходящая за край.</p>
+      </div>
+      <div class="card">
+        <h3>Проверка на кириллицу</h3>
+        <p>Половина модных гарнитур с Google Fonts кириллицу не держит и молча подменяется системным шрифтом. Проверяйте каждое начертание до вёрстки и требуйте замену в той же роли: дисплейная, интерфейсная, текстовая.</p>
+      </div>
+    </div>
+    <div class="prompt">
+      <span class="tag">Запрос нейросети</span>
+      <q>Подключи дизайн-систему из этой папки. Прочитай токены и гайдлайны, свёрстывай только через переменные, свои цвета и размеры не вводи. Если начертание не держит кириллицу, предложи замену в той же роли.</q>
+    </div>
+    <div class="sticker">Выход шага · tokens/*.css</div>
+  </div>
+</section>
+
+<!-- ============ 05 ============ -->
+<section class="sec s-ink step" id="interaktiv">
+  <div class="wrap">
+    <span class="num" aria-hidden="true">05</span>
+    <div class="kicker"><b>Шаг 05</b> · Интерактив</div>
+    <h2>Показать <span class="ghost">вместо рассказать</span></h2>
+    <p class="lead">Три вещи на сайте Цеха продают сильнее любого текста: калькулятор цены, проигрывающаяся смена в чате и бот, который считает то же самое в телеграме.</p>
+    <div class="cols">
+      <div class="card">
+        <h3>Калькулятор</h3>
+        <p>Человек сам собирает свой тариф и видит, из чего сложилась цена. Страх «цены по запросу» снимается на месте.</p>
+      </div>
+      <div class="card">
+        <h3>Демонстрация</h3>
+        <p>Продукт, проигранный прямо на странице. Это выход, а не обещание выхода.</p>
+      </div>
+      <div class="card">
+        <h3>Бот вместо формы</h3>
+        <p>Диалог по кнопкам: расчёт и бриф. Ловушка — цены живут в двух местах, на сайте и в боте. Правите одно, правьте оба.</p>
+      </div>
+    </div>
+    <div class="sticker">Выход шага · 192 сочетания совпадают до рубля</div>
+  </div>
+</section>
+
+<!-- ============ 06 ============ -->
+<section class="sec s-lime step" id="zayavki">
+  <div class="wrap">
+    <span class="num" aria-hidden="true">06</span>
+    <div class="kicker"><b>Шаг 06</b> · Заявки</div>
+    <h2>Куда падает <span class="ghost">лид</span></h2>
+    <p class="lead"><a class="term" href="#g-lid">Заявка</a>, которая открывает почтовый клиент, теряется в половине случаев. Приёмник ставится до первого трафика, а не после.</p>
+    <div class="cols">
+      <div class="card">
+        <h3>Быстрый путь</h3>
+        <p>Formspree: регистрация, новая форма, адрес вида <code>formspree.io/f/…</code> вставляется в одну строку кода. Пятнадцать минут, письмо на почту.</p>
+      </div>
+      <div class="card">
+        <h3>Путь Цеха</h3>
+        <p>Google Apps Script как веб-приложение: сайт и бот шлют заявку в одну точку, скрипт пишет строку в таблицу и присылает карточку в телеграм. Свойства проекта: id таблицы, токен бота, chat id, секрет.</p>
+        <p>Проверка — открыть адрес скрипта в браузере: должен ответить <code>{"ok":true}</code>.</p>
+      </div>
+      <div class="card">
+        <h3>Что проверить руками</h3>
+        <ul class="check">
+          <li>Заявка с сайта дошла до таблицы</li>
+          <li>Карточка пришла в телеграм</li>
+          <li>Диплинк <code>?start=brief</code> сразу начинает бриф</li>
+          <li>Согласие на обработку данных отмечено явно</li>
+        </ul>
+      </div>
+    </div>
+    <div class="prompt">
+      <span class="tag">Запрос нейросети</span>
+      <q>Сделай приём заявок: форма на сайте и бот шлют данные в одну точку, оттуда строка в таблицу и уведомление мне. Поля минимальные: контакт, суть запроса, согласие на обработку данных. Покажи, как проверить, что заявка дошла, и что делать, если приёмник не отвечает.</q>
+    </div>
+    <div class="sticker">Выход шага · таблица + карточка в личку</div>
+  </div>
+</section>
+
+<!-- ============ 07 ============ -->
+<section class="sec s-violet step" id="seo">
+  <div class="wrap">
+    <span class="num" aria-hidden="true">07</span>
+    <div class="kicker"><b>Шаг 07</b> · Видимость</div>
+    <h2>Поиск <span class="ghost">и нейросети</span></h2>
+    <p class="lead">Одностраничник держит один-два запроса. Всё остальное, что вы напишете, конкурирует само с собой внутри одного документа.</p>
+    <div class="cols">
+      <div class="card">
+        <h3>Страница на кластер запросов</h3>
+        <p>Минимум шесть адресов: главная, цены, как работает, кейсы, блог. Придуманный термин хорош как позиционирование и бесполезен как точка входа из поиска: спрос снимается в <a class="term" href="#g-wordstat">Вордстате</a> до того, как пишется текст.</p>
+      </div>
+      <div class="card">
+        <h3>Файлы у корня</h3>
+        <ul>
+          <li><a class="term" href="#g-robots"><code>robots.txt</code></a> — кого пускаем, включая AI-краулеров</li>
+          <li><a class="term" href="#g-sitemap"><code>sitemap.xml</code></a> — карта сайта</li>
+          <li><a class="term" href="#g-llms"><code>llms.txt</code></a> — выжимка продукта для нейросетей</li>
+          <li><a class="term" href="#g-canonical"><code>canonical</code></a> — главный адрес страницы</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Микроразметка</h3>
+        <p>Один блок <a class="term" href="#g-razmetka">JSON-LD</a> описывает организацию, услугу, инструкцию и вопросы-ответы. Это и расширенный сниппет в выдаче, и готовый ответ для чат-ботов, которые всё чаще приводят людей вместо поиска.</p>
+      </div>
+    </div>
+    <div class="prompt">
+      <span class="tag">Запрос нейросети</span>
+      <q>Собери llms.txt и JSON-LD по содержанию сайта: Organization, WebSite, Service с офферами, HowTo по шагам, FAQPage из блока ответов. Цифры бери только те, что уже стоят на странице, ничего не выдумывай.</q>
+    </div>
+    <div class="sticker">Выход шага · robots · sitemap · llms · ld+json</div>
+  </div>
+</section>
+
+<!-- ============ 08 ============ -->
+<section class="sec s-cream step" id="publikatsiya">
+  <div class="wrap">
+    <span class="num" aria-hidden="true">08</span>
+    <div class="kicker"><b>Шаг 08</b> · Публикация</div>
+    <h2>Домен <span class="ghost">и Pages</span></h2>
+    <p class="lead">Статический сайт не требует платного <a class="term" href="#g-hosting">хостинга</a>: <a class="term" href="#g-pages">GitHub Pages</a> отдаёт его бесплатно и с сертификатом.</p>
+    <div class="cols">
+      <div class="card">
+        <h3>Четыре шага</h3>
+        <ul>
+          <li><a class="term" href="#g-repo">Репозиторий</a>, файлы в корень ветки <code>main</code></li>
+          <li>Settings → Pages: источник <code>main</code>, папка <code>/ (root)</code></li>
+          <li>Свой <a class="term" href="#g-domen">домен</a>, файл <code>CNAME</code> рядом с index</li>
+          <li>Четыре <a class="term" href="#g-dns">A-записи</a> GitHub на <code>@</code> и CNAME на <code>www</code></li>
+        </ul>
+        <p>Когда домен проверится — галочка Enforce <a class="term" href="#g-https">HTTPS</a>.</p>
+      </div>
+      <div class="card">
+        <h3>Кириллический домен</h3>
+        <p>цех.запуск.рф живёт в файлах как <a class="term" href="#g-punycode">punycode</a>: <code>xn--e1a6ab.xn--80anktkl.xn--p1ai</code>. В canonical, sitemap, llms.txt и настройках счётчиков идёт punycode, человеку показывается кириллица.</p>
+      </div>
+      <div class="card">
+        <h3>Отдельная папка на выкладку</h3>
+        <p>Держите папку, куда копируется только то, что уходит на сервер: страницы, иконки, og, robots, sitemap, llms, оферта, политика. Черновики и бэкапы в репозиторий не попадают.</p>
+      </div>
+    </div>
+    <div class="prompt">
+      <span class="tag">Запрос нейросети</span>
+      <q>Разложи файлы сайта под публикацию на GitHub Pages и напиши мне инструкцию по шагам: что залить в репозиторий, что включить в настройках, какие DNS-записи добавить у регистратора домена. Объясни как человеку без опыта и добавь список проверок после выкладки.</q>
+    </div>
+    <div class="sticker">Выход шага · закрытый замок в адресной строке</div>
+  </div>
+</section>
+
+<!-- ============ 09 ============ -->
+<section class="sec s-fuchsia step" id="analitika">
+  <div class="wrap">
+    <span class="num" aria-hidden="true">09</span>
+    <div class="kicker"><b>Шаг 09</b> · Аналитика</div>
+    <h2>Ведомость <span class="ghost">вместо ощущений</span></h2>
+    <p class="lead">Счётчики ставятся до рекламы. Первая неделя трафика без аналитики — это неделя, про которую вы никогда ничего не узнаете.</p>
+    <div class="cols">
+      <div class="card">
+        <h3>Два счётчика, одна функция</h3>
+        <p><a class="term" href="#g-schetchik">Plausible</a> держит воронку и события, Яндекс Метрика — вебвизор и карту кликов. Обе получают событие из одной обёртки: если стоит только одна, вторая строка молча не срабатывает, и код не ломается.</p>
+      </div>
+      <div class="card">
+        <h3>Что размечено на сайте Цеха</h3>
+        <ul>
+          <li><code>cta_click</code> — с меткой места кнопки</li>
+          <li><code>scroll_depth</code> — 25 / 50 / 75 / 100</li>
+          <li><code>demo_replay</code>, <code>release_tab</code></li>
+          <li><code>calc_submit</code> — с параметрами расчёта</li>
+          <li><code>chat_calc_start</code> → <code>chat_calc_done</code></li>
+          <li><code>chat_brief_start</code> → <code>chat_lead</code></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Что смотреть еженедельно</h3>
+        <ul class="check">
+          <li>Доля дошедших до 50 % — работает ли первый экран</li>
+          <li>Клики по CTA в разбивке по местам</li>
+          <li>Начал расчёт → закончил: где отваливаются</li>
+          <li>Начал бриф → отправил: длина брифа</li>
+          <li>Заявки из таблицы против кликов: сходится ли</li>
+        </ul>
+      </div>
+    </div>
+    <div class="prompt">
+      <span class="tag">Запрос нейросети</span>
+      <q>Размети события одной функцией, которая пишет и в Plausible, и в Метрику. Ключевые точки: клики по CTA с местом, глубина прокрутки, старт и финиш калькулятора, старт и отправка брифа. Потом собери недельную ведомость по этим событиям.</q>
+    </div>
+    <div class="sticker">Выход шага · <a class="term" href="#g-console">Search Console</a> · Вебмастер · Метрика</div>
+  </div>
+</section>
+
+<!-- ============ RULES ============ -->
+<section class="sec s-ink" id="pravila">
+  <div class="wrap">
+    <div class="kicker"><b>✦</b> Правила цеха</div>
+    <h2>Как вести <span class="ghost">нейросеть</span></h2>
+    <div class="cols">
+      <div class="card">
+        <h3>Контекст живёт в файлах</h3>
+        <p>Ядро, дизайн-система, инструкции по публикации — на диске рядом с проектом. Новая сессия читает их и продолжает, а не начинает заново.</p>
+      </div>
+      <div class="card">
+        <h3>Один заход — один слой</h3>
+        <p>Смыслы, потом структура, потом вёрстка, потом видимость. Смешивать слои в одном запросе — верный способ получить красивую страницу, которая не продаёт.</p>
+      </div>
+      <div class="card">
+        <h3>Проси разбор, а не похвалу</h3>
+        <p>«Разбери как маркетолог и отсортируй правки по влиянию на выручку» даёт другой результат, чем «как тебе сайт». Отдельно проси назвать, чего делать <strong>не</strong> стоит.</p>
+      </div>
+      <div class="card">
+        <h3>Копия перед каждой крупной правкой</h3>
+        <p>Файл с датой в имени рядом с рабочим. Возврат к предыдущей редакции должен стоить одну команду.</p>
+      </div>
+      <div class="card">
+        <h3>Цифры только проверяемые</h3>
+        <p>Каждое число на сайте — либо со ссылкой на источник, либо ваше измеренное. Всё остальное помечается «уточнить факт» и не публикуется.</p>
+      </div>
+      <div class="card">
+        <h3>Одна правда на два места</h3>
+        <p>Если цена лежит и на сайте, и в боте — заведите правило проверять оба. Расхождение в сумме стоит дороже, чем любая опечатка в тексте.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ СЛОВАРЬ ============ -->
+<section class="sec s-violet" id="slovar">
+  <div class="wrap">
+    <div class="kicker"><b>АБВ</b> Словарь</div>
+    <h2>Странные <span class="ghost">слова</span></h2>
+    <p class="lead">Всё, что встречается в тексте и звучит как жаргон разработчиков. Человеческим языком, без точности ради точности.</p>
+    <dl class="gloss">
+      <div id="g-domen"><dt>Домен</dt><dd>Адрес сайта, который человек набирает в браузере. Покупается у регистратора на год, стоит около тысячи рублей. Домен и сайт — разные вещи: домен только указывает, куда идти.</dd></div>
+      <div id="g-hosting"><dt>Хостинг</dt><dd>Компьютер, который круглосуточно отдаёт файлы сайта всем, кто на него зашёл. Для статического сайта из готовых страниц он бывает бесплатным.</dd></div>
+      <div id="g-pages"><dt>GitHub Pages</dt><dd>Бесплатный хостинг от GitHub: вы кладёте файлы страниц в хранилище кода, он показывает их как сайт и сам выпускает сертификат безопасности.</dd></div>
+      <div id="g-repo"><dt>Репозиторий</dt><dd>Папка проекта на GitHub с историей всех правок. Каждое сохранение видно отдельно, к любому можно вернуться.</dd></div>
+      <div id="g-dns"><dt>DNS, A-запись, CNAME</dt><dd>Телефонная книга интернета. A-запись говорит «этот домен живёт вот по такому адресу», CNAME — «этот адрес то же самое, что вон тот». Записи добавляются в панели регистратора домена и обновляются от минут до нескольких часов.</dd></div>
+      <div id="g-https"><dt>HTTPS и сертификат</dt><dd>Шифрование связи между сайтом и посетителем. Браузер показывает замок в адресной строке, а без него ругается на «небезопасный сайт». Сертификат для домена GitHub Pages выпускает сам и бесплатно.</dd></div>
+      <div id="g-punycode"><dt>Punycode</dt><dd>Запись кириллического домена латиницей, понятная технике. цех.запуск.рф внутри файлов выглядит как xn--e1a6ab.xn--80anktkl.xn--p1ai, человеку по-прежнему показывается кириллица.</dd></div>
+      <div id="g-tokeny"><dt>Токены и дизайн-система</dt><dd>Список переменных: этот цвет фирменный, этот шрифт для заголовков, отступ такой-то. Записывается один раз, дальше вся вёрстка ссылается на переменные, а не на конкретные значения. Меняете в одном месте — меняется везде.</dd></div>
+      <div id="g-lid"><dt>Лид</dt><dd>Человек, оставивший контакт: заполнил форму, написал боту, нажал «свяжитесь со мной». Ещё не клиент, но уже не случайный посетитель.</dd></div>
+      <div id="g-cta"><dt>CTA, целевое действие</dt><dd>То, что вы просите сделать: нажать кнопку, оставить контакт, записаться. Call to action, «призыв к действию». На каждом экране разумно просить что-то одно.</dd></div>
+      <div id="g-konversiya"><dt>Конверсия и микро-конверсия</dt><dd>Конверсия — доля посетителей, дошедших до целевого действия. Микро-конверсия — лёгкий шаг по дороге к нему: скачать пример, получить пробный выпуск, посмотреть расчёт. Нужна, чтобы не требовать от новичка сразу большого шага.</dd></div>
+      <div id="g-robots"><dt>robots.txt</dt><dd>Текстовый файл в корне сайта, где написано, каким роботам что можно смотреть. Читают и поисковики, и краулеры нейросетей.</dd></div>
+      <div id="g-sitemap"><dt>sitemap.xml</dt><dd>Список всех адресов сайта с датами обновления. Поисковик берёт его как оглавление и не ищет страницы наугад.</dd></div>
+      <div id="g-llms"><dt>llms.txt</dt><dd>Молодой формат: короткая выжимка о продукте специально для языковых моделей. Что это, для кого, сколько стоит, где что лежит — фактами, без маркетинга.</dd></div>
+      <div id="g-canonical"><dt>Canonical</dt><dd>Пометка «главный адрес этой страницы вот такой». Спасает, когда одна и та же страница доступна по нескольким адресам: поисковик считает их одной, а не копиями.</dd></div>
+      <div id="g-razmetka"><dt>Микроразметка, JSON-LD</dt><dd>Невидимый человеку блок данных в странице: тут организация, тут услуга с ценами, тут инструкция, тут вопросы и ответы. Из него поисковик собирает расширенный сниппет, а чат-бот — готовый ответ.</dd></div>
+      <div id="g-wordstat"><dt>Вордстат</dt><dd>Бесплатный сервис Яндекса, показывающий, сколько раз в месяц люди искали ту или иную фразу. Нужен, чтобы писать текст под слова, которые действительно набирают.</dd></div>
+      <div id="g-schetchik"><dt>Счётчик, Plausible и Метрика</dt><dd>Код на странице, считающий посетителей и их действия. Метрика ещё и записывает движения курсора. Без счётчика вы не узнаете, доходят ли люди до кнопки.</dd></div>
+      <div id="g-console"><dt>Search Console и Вебмастер</dt><dd>Кабинеты Google и Яндекса для владельца сайта. Там подтверждают права на домен, отправляют карту сайта и просят обойти новую страницу, не дожидаясь планового визита робота.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="sec s-cream" id="voprosy">
+  <div class="wrap">
+    <div class="kicker"><b>?</b> Частые вопросы</div>
+    <h2>Вопросы <span class="ghost">и ответы</span></h2>
+    <div class="faq">
+      <details open>
+        <summary>Сколько времени занимает сборка сайта с нейросетью</summary>
+        <p>Три-пять заходов по паре часов, если ядро бренда уже собрано. Самый долгий шаг — первый: распаковка смыслов занимает день и делается один раз. Вёрстка, интерактив и публикация укладываются в выходные.</p>
+      </details>
+      <details>
+        <summary>Нужно ли уметь программировать</summary>
+        <p>Писать код руками не нужно, а вот читать структуру и проверять результат придётся. Минимум: понимать, где лежат файлы, уметь открыть страницу локально и отличить рабочую правку от сломанной. Всё остальное делается словами.</p>
+      </details>
+      <details>
+        <summary>Чем это отличается от конструктора вроде Тильды</summary>
+        <p>Файлы остаются вашими, ежемесячной платы за конструктор нет, любая разметка и любой скрипт добавляются без ограничений тарифа. Взамен вы сами настраиваете домен, хостинг и аналитику — это разовая работа на час.</p>
+      </details>
+      <details>
+        <summary>Может ли нейросеть придумать смыслы вместо меня</summary>
+        <p>Нет. Она распаковывает ваши: задаёт вопросы, вытаскивает формулировки, собирает их в структуру и держит потом на всех материалах. Позиционирование, цены и обещания остаются вашим решением.</p>
+      </details>
+      <details>
+        <summary>Индексируется ли такой сайт в Яндексе и Google</summary>
+        <p>Да, это обычный статический HTML — для поисковика он ничем не отличается от сайта на любой CMS. Индексацию определяют структура страниц, микроразметка, robots.txt с sitemap.xml и подтверждённые Search Console и Яндекс Вебмастер.</p>
+      </details>
+      <details>
+        <summary>Сколько стоит держать такой сайт</summary>
+        <p>Домен — порядка тысячи рублей в год, хостинг на GitHub Pages бесплатный, Plausible и Метрика на старте тоже. Основная стоимость — ваше время на первую сборку.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="sec s-ink">
+  <div class="wrap">
+    <div class="kicker"><b>●</b> Дальше</div>
+    <h2>Сайт готов. <span class="ghost">Кто наполнит?</span></h2>
+    <p class="lead">Сборка сайта — разовая работа. Контент после запуска нужен каждый день, и это тот же конвейер: смыслы, план, текст, визуал, публикация, ведомость.</p>
+    <p>ЦЕХ — контент-завод на AI-агентах: команда агентов ведёт соцсети бренда в его голосе, а файлы остаются у вас на диске. Собран по тем же девяти шагам, что описаны выше.</p>
+    <div class="cta-row">
+      <a class="btn" href="/">Посмотреть, как устроен ЦЕХ</a>
+      <a class="btn ghost-btn" href="/#sborka">Как проходит сборка</a>
+    </div>
+    <p class="author">ЦЕХ · 25 августа 2026 · разбор собственной сборки</p>
+  </div>
+</section>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": "https://xn--e1a6ab.xn--80anktkl.xn--p1ai/blog/kak-sdelat-sayt-neyrosetyu/#article",
+      "headline": "Как сделать сайт с помощью нейросети: 9 шагов от смыслов до аналитики",
+      "description": "Пошаговый разбор сборки сайта с нейросетью: ядро бренда, боль покупателя, порядок блоков, дизайн-система, интерактив, приём заявок, SEO, публикация и метрики.",
+      "inLanguage": "ru-RU",
+      "datePublished": "2026-08-25",
+      "dateModified": "2026-08-25",
+      "wordCount": 1900,
+      "keywords": "как сделать сайт с помощью нейросети, сайт нейросетью, лендинг с ИИ, сайт без программиста, GitHub Pages, микроразметка, llms.txt",
+      "articleSection": "Практика",
+      "mainEntityOfPage": {"@type": "WebPage", "@id": "https://xn--e1a6ab.xn--80anktkl.xn--p1ai/blog/kak-sdelat-sayt-neyrosetyu/"},
+      "image": "https://xn--e1a6ab.xn--80anktkl.xn--p1ai/og.png",
+      "author": {"@type": "Organization", "name": "ЦЕХ", "url": "https://xn--e1a6ab.xn--80anktkl.xn--p1ai/"},
+      "publisher": {"@type": "Organization", "name": "ЦЕХ", "url": "https://xn--e1a6ab.xn--80anktkl.xn--p1ai/"}
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "ЦЕХ", "item": "https://xn--e1a6ab.xn--80anktkl.xn--p1ai/"},
+        {"@type": "ListItem", "position": 2, "name": "Блог", "item": "https://xn--e1a6ab.xn--80anktkl.xn--p1ai/blog/"},
+        {"@type": "ListItem", "position": 3, "name": "Как сделать сайт с помощью нейросети"}
+      ]
+    },
+    {
+      "@type": "HowTo",
+      "name": "Как сделать сайт с помощью нейросети",
+      "description": "Девять шагов сборки сайта с нейросетью: от ядра бренда до аналитики.",
+      "inLanguage": "ru-RU",
+      "totalTime": "P3D",
+      "step": [
+        {"@type": "HowToStep", "position": 1, "name": "Собрать ядро бренда", "text": "Записать в файл аудиторию, позиционирование, линейку, каналы, воронку, банк CTA, голос и стоп-лист. Контекст должен жить в файле, а не в диалоге.", "url": "https://xn--e1a6ab.xn--80anktkl.xn--p1ai/blog/kak-sdelat-sayt-neyrosetyu/#yadro"},
+        {"@type": "HowToStep", "position": 2, "name": "Назвать боль и цену рынка", "text": "Переписать лид на языке покупателя и добавить секцию сравнения с альтернативами: штат, фрилансер, агентство. Цифры рынка со ссылками на источники.", "url": "https://xn--e1a6ab.xn--80anktkl.xn--p1ai/blog/kak-sdelat-sayt-neyrosetyu/#bol"},
+        {"@type": "HowToStep", "position": 3, "name": "Выстроить порядок блоков", "text": "Сначала боль, потом деньги, потом демонстрация, потом устройство, цена и философия. Действие разбить на лёгкую и основную ступень.", "url": "https://xn--e1a6ab.xn--80anktkl.xn--p1ai/blog/kak-sdelat-sayt-neyrosetyu/#struktura"},
+        {"@type": "HowToStep", "position": 4, "name": "Подключить дизайн-систему", "text": "Задать токены цвета, типографики, шрифтов и отступов и верстать только через переменные. Проверить начертания на кириллицу.", "url": "https://xn--e1a6ab.xn--80anktkl.xn--p1ai/blog/kak-sdelat-sayt-neyrosetyu/#dizayn"},
+        {"@type": "HowToStep", "position": 5, "name": "Добавить интерактив", "text": "Калькулятор цены, демонстрация продукта и чат-бот вместо формы показывают результат вместо описания.", "url": "https://xn--e1a6ab.xn--80anktkl.xn--p1ai/blog/kak-sdelat-sayt-neyrosetyu/#interaktiv"},
+        {"@type": "HowToStep", "position": 6, "name": "Настроить приём заявок", "text": "Подключить приёмник форм до первого трафика: Formspree или Google Apps Script с записью в таблицу и уведомлением в телеграм.", "url": "https://xn--e1a6ab.xn--80anktkl.xn--p1ai/blog/kak-sdelat-sayt-neyrosetyu/#zayavki"},
+        {"@type": "HowToStep", "position": 7, "name": "Сделать сайт видимым", "text": "Разбить на страницы по кластерам запросов, положить robots.txt, sitemap.xml и llms.txt, добавить микроразметку JSON-LD.", "url": "https://xn--e1a6ab.xn--80anktkl.xn--p1ai/blog/kak-sdelat-sayt-neyrosetyu/#seo"},
+        {"@type": "HowToStep", "position": 8, "name": "Опубликовать", "text": "Залить файлы в репозиторий, включить GitHub Pages, привязать домен через CNAME и A-записи, включить HTTPS.", "url": "https://xn--e1a6ab.xn--80anktkl.xn--p1ai/blog/kak-sdelat-sayt-neyrosetyu/#publikatsiya"},
+        {"@type": "HowToStep", "position": 9, "name": "Поставить аналитику", "text": "Подключить счётчики и разметить события одной функцией, подтвердить Search Console и Яндекс Вебмастер, смотреть ведомость еженедельно.", "url": "https://xn--e1a6ab.xn--80anktkl.xn--p1ai/blog/kak-sdelat-sayt-neyrosetyu/#analitika"}
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {"@type": "Question", "name": "Сколько времени занимает сборка сайта с нейросетью", "acceptedAnswer": {"@type": "Answer", "text": "Три-пять заходов по паре часов, если ядро бренда уже собрано. Самый долгий шаг — распаковка смыслов, она занимает день и делается один раз."}},
+        {"@type": "Question", "name": "Нужно ли уметь программировать", "acceptedAnswer": {"@type": "Answer", "text": "Писать код руками не нужно, но читать структуру и проверять результат придётся: понимать, где лежат файлы, открыть страницу локально и отличить рабочую правку от сломанной."}},
+        {"@type": "Question", "name": "Чем это отличается от конструктора вроде Тильды", "acceptedAnswer": {"@type": "Answer", "text": "Файлы остаются вашими, ежемесячной платы нет, любая разметка и скрипт добавляются без ограничений тарифа. Взамен домен, хостинг и аналитику вы настраиваете сами — это разовая работа на час."}},
+        {"@type": "Question", "name": "Может ли нейросеть придумать смыслы вместо меня", "acceptedAnswer": {"@type": "Answer", "text": "Нет. Она распаковывает ваши: задаёт вопросы, вытаскивает формулировки и собирает их в структуру. Позиционирование, цены и обещания остаются вашим решением."}},
+        {"@type": "Question", "name": "Индексируется ли такой сайт в Яндексе и Google", "acceptedAnswer": {"@type": "Answer", "text": "Да, это обычный статический HTML. Индексацию определяют структура страниц, микроразметка, robots.txt с sitemap.xml и подтверждённые Search Console и Яндекс Вебмастер."}},
+        {"@type": "Question", "name": "Сколько стоит держать такой сайт", "acceptedAnswer": {"@type": "Answer", "text": "Домен — порядка тысячи рублей в год, хостинг на GitHub Pages бесплатный, Plausible и Яндекс Метрика на старте тоже бесплатны."}}
+      ]
+    }
+  ]
+}
+</script>
+</body>
+</html>
