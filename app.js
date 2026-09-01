@@ -153,24 +153,13 @@
     [25,50,75,100].forEach(function(k){ if(!m[k]&&p>=k){m[k]=1;track('scroll_depth',{depth:k});} });
   },{passive:true});
 
-  /* ---------- калькулятор тарифа ----------
-     Считает цену на месте и передаёт параметры в форму заявки.
-     НАСТРОЙКА: BOT_URL — запасной путь, если скрипт формы не загрузился.
-
-     ПРАЙС · единственное место, где меняются деньги. Значения должны
-     совпадать с bot.py, иначе сайт и телеграм назовут разные цены. */
+  /* ---------- калькулятор параметров ----------
+     Цену не считает: собирает параметры и передаёт их в форму заявки.
+     Точную цену называют после разбора канала.
+     НАСТРОЙКА: BOT_URL — запасной путь, если скрипт формы не загрузился. */
   var BOT_URL="https://t.me/tseh_lab_bot";
 
-  var BASE=10000, PLATFORM_STEP=3500;
-  var FREQ={2:-1500, 3:0, 5:4000, 7:7000};
-  var VISUAL={1:0, 2:3000, 3:5000};
-  var GENERATION=2900, ERP=15000;
   var TITLES={p:'Площадки', f:'Ритм', v:'Визуал', g:'Фото и видео', e:'Учёт и ERP'};
-
-  function money(n){
-    var s=String(Math.round(Math.abs(n))).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
-    return (n<0?'−':'')+s+' ₽';
-  }
 
   var calc=document.getElementById('kalkulyator');
   if(calc){
@@ -180,17 +169,7 @@
              v:document.getElementById('sumV'),g:document.getElementById('sumG'),
              e:document.getElementById('sumE')};
     var vol=document.getElementById('calcVol'), go=document.getElementById('calcGo');
-    var priceBox=document.getElementById('calcPrice');
 
-    function price(){
-      var total=BASE;
-      total += (state.p-1)*PLATFORM_STEP;
-      total += FREQ[state.f]||0;
-      total += VISUAL[state.v]||0;
-      if(state.g) total+=GENERATION;
-      if(state.e) total+=ERP;
-      return total;
-    }
     function payload(){ return 'p'+state.p+'f'+state.f+'v'+state.v+'g'+state.g+'e'+state.e; }
     function paramsText(){
       return ['p','f','v','g','e'].map(function(k){ return TITLES[k]+': '+labels[k]; }).join('; ');
@@ -207,7 +186,6 @@
     function draw(){
       for(var k in out){ if(out[k]) out[k].textContent=labels[k]; }
       vol.innerHTML='≈ '+volume()+' материалов<small>в месяц при этих параметрах</small>';
-      if(priceBox) priceBox.innerHTML=money(price())+'<small>в месяц, сборка входит</small>';
       /* Кнопка ведёт в форму на этой же странице. Телеграм остаётся запасным
          путём: если скрипт формы не загрузился, ссылка откроет бота. */
       if(document.getElementById('leadForm')){ go.href='#zayavka'; go.removeAttribute('target'); }
@@ -227,10 +205,8 @@
       });
     });
     go.addEventListener('click',function(){
-      track('calc_submit',{p:state.p,f:state.f,v:state.v,g:state.g,e:state.e,sum:price()});
-      if(window.TSEH_FORM) window.TSEH_FORM.fromCalc({
-        payload:payload(), text:paramsText(), sum:price(), sumText:money(price())
-      });
+      track('calc_submit',{p:state.p,f:state.f,v:state.v,g:state.g,e:state.e});
+      if(window.TSEH_FORM) window.TSEH_FORM.fromCalc({payload:payload(), text:paramsText()});
     });
     draw();
   }
@@ -522,8 +498,11 @@
   function validate(){
     clearAll();
     var bad=null;
-    if(!okLink(f.link.value.trim())){
-      fail(f.link,'err-link','Нужна ссылка: t.me/канал, @канал или адрес сайта. Нет ни того, ни другого — напишите на '+LEAD_MAIL+'.');
+    /* ссылка по желанию: пустую пропускаем, вписанную проверяем на формат,
+       чтобы опечатка не уехала в заявку молча */
+    var link=f.link.value.trim();
+    if(link && !okLink(link)){
+      fail(f.link,'err-link','Не разобрал ссылку. Нужен t.me/канал, @канал или адрес сайта — или оставьте поле пустым.');
       bad=bad||f.link;
     }
     if(!okContact(f.contact.value.trim())){
@@ -552,7 +531,6 @@
       note:    f.note.value.trim(),
       params:      fromCalc ? fromCalc.payload : '',
       params_text: fromCalc ? fromCalc.text : '',
-      sum:         fromCalc ? fromCalc.sum : '',
       consent: true,
       page: location.href,
       ref: document.referrer||'',
@@ -575,7 +553,7 @@
       /* параметры калькулятора тоже возвращаем, иначе повторная отправка
          уйдёт без цены, которую человек уже посчитал */
       if(o.d.params){
-        fromCalc={payload:o.d.params, text:o.d.params_text, sum:o.d.sum, sumText:''};
+        fromCalc={payload:o.d.params, text:o.d.params_text};
         if(o.d.params_text){
           f.calc.hidden=false;
           f.calc.textContent='Из калькулятора: '+o.d.params_text;
@@ -588,7 +566,7 @@
   function mailFallback(d){
     var s=encodeURIComponent('Заявка с сайта ЦЕХ · '+(d.name||d.contact));
     var b=encodeURIComponent(
-      'Канал или сайт: '+d.link+'\nКонтакт: '+d.contact+'\nЧто нужно: '+d.tier+
+      (d.link?'Канал или сайт: '+d.link+'\n':'')+'Контакт: '+d.contact+'\nЧто нужно: '+d.tier+
       '\nИмя: '+(d.name||'не указано')+
       (d.note?'\nО задаче: '+d.note:'')+
       (d.params_text?'\nПараметры: '+d.params_text:'')+'\nСтраница: '+d.page);
@@ -664,7 +642,7 @@
       fromCalc=c;
       f.tier.value='Свой тариф · нужен расчёт';
       f.calc.hidden=false;
-      f.calc.textContent='Из калькулятора: '+c.sumText+' в месяц · '+c.text;
+      f.calc.textContent='Из калькулятора: '+c.text;
       var first = f.link.value.trim() ? f.contact : f.link;
       setTimeout(function(){ first.focus({preventScroll:true}); },400);
     }

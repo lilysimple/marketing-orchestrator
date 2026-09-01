@@ -100,12 +100,6 @@ def _clip(v: Any, limit: int) -> str:
     return str(v or "").strip()[:limit]
 
 
-def _money(v: str) -> str:
-    """26900 → «26 900». Разряды, как на сайте."""
-    if not v.isdigit():
-        return v
-    return f"{int(v):,}".replace(",", "\u00a0")
-
 
 def _card(d: dict[str, Any]) -> str:
     """Заявка одним сообщением: сверху контакт, потому что по нему отвечают."""
@@ -114,15 +108,14 @@ def _card(d: dict[str, Any]) -> str:
         "<b>Заявка с сайта</b>",
         "",
         f"Контакт: <code>{e(d['contact'])}</code>",
-        f"Канал: {e(d['link'])}",
         f"Что нужно: {e(d['tier']) or '—'}",
     ]
+    if d["link"]:
+        rows.append(f"Канал: {e(d['link'])}")
     if d["name"]:
         rows.append(f"Имя: {e(d['name'])}")
     if d["note"]:
         rows.append(f"О задаче: {e(d['note'])}")
-    if d["sum"]:
-        rows.append(f"Расчёт: {e(_money(d['sum']))} ₽ в месяц")
     if d["params_text"]:
         rows.append(f"Параметры: {e(d['params_text'])}")
     rows += [
@@ -163,13 +156,13 @@ async def handle_lead(request: web.Request) -> web.Response:
         "note": _clip(body.get("note"), 1500),
         "branch": _clip(body.get("branch"), 40),
         "params_text": _clip(body.get("params_text"), 300),
-        "sum": _clip(body.get("sum"), 20),
         "page": _clip(body.get("page"), 300),
         "ref": _clip(body.get("ref"), 300),
         "seconds": int(body.get("seconds") or 0),
     }
 
-    if not _ok_contact(d["contact"]) or not d["link"]:
+    # Ссылка по желанию: отвечают по контакту, он и решает.
+    if not _ok_contact(d["contact"]):
         log.info("Заявка без рабочего контакта, отбита: %r", d["contact"])
         return _cors(request, web.json_response({"ok": False}, status=422))
 
