@@ -423,64 +423,61 @@
 .ftr .mark{opacity:.5;line-height:1.9}
 
 
-/* ================= ЧАТ-БОТ ================= */
-.chat{background:var(--paper-2);color:var(--ink);border:3px solid var(--ink);display:flex;flex-direction:column}
-.chat-top{display:flex;align-items:center;gap:9px;padding:13px 16px;border-bottom:2px solid var(--ink);
-  background:var(--ink);color:var(--paper);font-family:var(--f-m);font-size:10.5px;font-weight:700;
-  text-transform:uppercase;letter-spacing:.16em}
-.chat-top b{font-weight:700}
-.chat-top .chat-st{margin-left:auto;opacity:.6;letter-spacing:.1em}
-.chat-dot{width:8px;height:8px;background:var(--lime);border-radius:50%;flex:none}
+/* ================= ФОРМА ЗАЯВКИ ================= */
+.lf{background:var(--paper-2);color:var(--ink);border:3px solid var(--ink);padding:clamp(20px,2.4vw,30px)}
+.lf-row{margin-bottom:16px}
+.lf-l{display:block;font-family:var(--f-m);font-size:10.5px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.16em;margin-bottom:7px}
+.lf-l i{font-style:normal;color:var(--ink-soft);letter-spacing:.1em;font-weight:500}
+.lf-i{width:100%;box-sizing:border-box;font-family:var(--f-b);font-size:16px;color:var(--ink);
+  background:var(--paper);border:2px solid var(--ink);padding:12px 14px}
+.lf-i:focus{outline:none;border-color:var(--fuchsia);background:#fff}
+.lf-i.bad{border-color:var(--fuchsia);background:#fff}
+.lf-t{resize:vertical;min-height:76px;line-height:1.5}
+select.lf-i{appearance:none;cursor:pointer;
+  background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),
+    linear-gradient(135deg,var(--ink) 50%,transparent 50%);
+  background-position:calc(100% - 19px) 20px,calc(100% - 13px) 20px;
+  background-size:6px 6px,6px 6px;background-repeat:no-repeat;padding-right:40px}
 
-.chat-log{padding:18px 16px 6px;overflow-y:auto;max-height:min(56vh,520px);min-height:260px;
-  display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
-.chat-log::-webkit-scrollbar{width:6px}
-.chat-log::-webkit-scrollbar-thumb{background:var(--line)}
+.lf-e{margin:7px 0 0;font-family:var(--f-b);font-size:13.5px;line-height:1.45;color:var(--fuchsia)}
 
-.msg{max-width:88%;font-family:var(--f-b);font-size:15px;line-height:1.55;padding:12px 14px;border:2px solid var(--ink)}
-.msg a{color:var(--fuchsia)}
-.msg-b{align-self:flex-start;background:var(--paper)}
-.msg-m{align-self:flex-end;background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.msg-sum{display:block;font-family:var(--f-d);font-weight:900;font-size:clamp(21px,2.4vw,27px);
-  text-transform:uppercase;letter-spacing:-.03em;line-height:1.1}
-.msg-sub{display:block;font-family:var(--f-m);font-size:11px;text-transform:uppercase;
-  letter-spacing:.1em;color:var(--ink-soft);margin-top:6px;line-height:1.6}
-.msg-h{display:block;font-family:var(--f-m);font-size:10px;font-weight:700;text-transform:uppercase;
-  letter-spacing:.18em;color:var(--fuchsia);margin:14px 0 6px;font-style:normal}
-.msg-l,.msg-p{list-style:none;margin:0;padding:0;font-size:14px}
-.msg-l li{padding:4px 0;border-bottom:1px solid var(--line)}
-.msg-p li{display:flex;justify-content:space-between;gap:14px;padding:4px 0;border-bottom:1px solid var(--line)}
-.msg-p li span{font-family:var(--f-m);font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft)}
-.msg-l li:last-child,.msg-p li:last-child{border-bottom:0}
+.lf-c{display:flex;gap:10px;align-items:flex-start;margin:20px 0 6px;
+  font-size:13.5px;line-height:1.5;cursor:pointer}
+.lf-c input{flex:none;width:19px;height:19px;margin:1px 0 0;accent-color:var(--fuchsia);cursor:pointer}
+.lf-c a{color:var(--fuchsia)}
 
-.msg-typing{display:flex;gap:5px;align-items:center;padding:16px 14px}
-.msg-typing i{width:6px;height:6px;background:var(--ink);border-radius:50%;opacity:.3;animation:chatdot 1s infinite}
-.msg-typing i:nth-child(2){animation-delay:.15s}
-.msg-typing i:nth-child(3){animation-delay:.3s}
-@keyframes chatdot{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:.9;transform:translateY(-3px)}}
+/* ловушка для спам-скриптов: человеку не видна и в таб-порядок не попадает */
+.lf-trap{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
 
-.chat-act{display:flex;flex-wrap:wrap;gap:8px;padding:14px 16px 16px;border-top:2px solid var(--ink);
-  background:var(--paper-2);min-height:66px;align-items:center}
-.chat-b{font-family:var(--f-m);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
-  padding:12px 16px;background:var(--lime);color:var(--lime-on);border:2px solid var(--ink);cursor:pointer;
-  transition:transform .14s ease,background .14s ease}
-.chat-b:hover{transform:translate(2px,-2px);background:var(--ink);color:var(--lime)}
-.chat-b:focus-visible{outline:3px solid var(--fuchsia);outline-offset:2px}
-.chat-b-soft{background:transparent;color:var(--ink)}
-.chat-b-soft:hover{background:var(--ink);color:var(--paper)}
+.lf-go{margin-top:18px;width:100%;justify-content:center;text-align:center}
+.lf-go[disabled]{opacity:.55;cursor:default;transform:none}
 
-.chat-in{display:flex;flex-wrap:wrap;gap:8px;width:100%}
-.chat-in input{flex:1 1 220px;min-width:0;font-family:var(--f-b);font-size:16px;color:var(--ink);
-  background:var(--paper);border:2px solid var(--ink);padding:11px 14px}
-.chat-in input:focus{outline:none;border-color:var(--fuchsia);background:#fff}
-.chat-in input.bad{border-color:var(--fuchsia);background:#fff}
+.lf-st{margin:12px 0 0;font-family:var(--f-b);font-size:13.5px;line-height:1.5;min-height:1px}
+.lf-st-wait{color:var(--ink-soft)}
+.lf-st-bad{color:var(--fuchsia)}
+
+.lf-calc{margin:0 0 18px;padding:11px 13px;border:2px solid var(--ink);background:var(--lime);
+  color:var(--lime-on);font-family:var(--f-m);font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.1em;line-height:1.6}
+
+.lf-ok{text-align:center;padding:14px 0}
+.lf-ok b{display:block;font-family:var(--f-d);font-weight:900;font-size:clamp(24px,3vw,34px);
+  text-transform:uppercase;letter-spacing:-.03em;line-height:1.05}
+.lf-ok span{display:block;font-family:var(--f-m);font-size:11px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--ink-soft);margin:10px 0 20px;line-height:1.6}
+
+/* цена в калькуляторе */
+.calc-money{font-family:var(--f-d);font-weight:900;font-size:clamp(30px,4.2vw,44px);
+  text-transform:uppercase;letter-spacing:-.04em;line-height:1;margin-bottom:18px}
+.calc-money small{display:block;font-family:var(--f-m);font-size:10.5px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.14em;color:var(--ink-soft);margin-top:8px;
+  letter-spacing:.12em}
 
 @media(max-width:760px){
-  .chat-log{max-height:62vh}
-  .msg{max-width:94%;font-size:14.5px}
+  .lf{padding:20px 16px}
 }
 @media(prefers-reduced-motion:reduce){
-  .chat-log{scroll-behavior:auto}
-  .msg-typing i{animation:none}
-  .chat-b:hover{transform:none}
+  .lf-go:hover{transform:none}
 }
+
